@@ -1,0 +1,2 @@
+C:\Users\sagim\OneDrive\Desktop\SmartBook\SmartBook\obj\Debug\SmartBook.csprojAssemblyReference.cache
+C:\Users\sagim\OneDrive\Desktop\SmartBook\SmartBook\obj\Debug\SmartBook.csproj.CoreCompileInputs.cache
