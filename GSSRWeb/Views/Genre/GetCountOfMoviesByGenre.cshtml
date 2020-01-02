@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Website.ViewModels.MoviesCountByGenre>
+<link href="~/Content/styling.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Our genres:</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.GenreName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.countOfMovies)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.GenreName, "GetAllMovies", "Movie", new { genreId = item.GenreId }, null)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.countOfMovies)
+            </td>
+        </tr>
+    }
+
+</table>

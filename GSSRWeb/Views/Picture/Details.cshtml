@@ -1,0 +1,26 @@
+﻿@model Website.Models.Picture
+<link href="~/Content/styling.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details on picture:</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.PictureName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PictureName)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.PictureId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

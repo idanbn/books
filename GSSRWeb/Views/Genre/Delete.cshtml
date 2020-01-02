@@ -1,0 +1,33 @@
+﻿@model Website.Models.Genre
+<link href="~/Content/styling.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete genre:</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.GenreName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GenreName)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "GetCountOfMoviesByGenre")
+        </div>
+    }
+</div>

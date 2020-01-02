@@ -1,0 +1,48 @@
+﻿@model GSSRWeb.Models.ActorLocation
+
+@{
+    ViewBag.Title = "Delete";
+}
+<link href="~/Content/styling.css" rel="stylesheet" type="text/css" />
+
+
+<h2>Are you sure you want to delete @Model.Actor.ActorName location?</h2>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Actor.ActorName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Actor.ActorName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Lat)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Lat)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Long)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Long)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to main page", "Index", "Main")
+        </div>
+    }
+</div>

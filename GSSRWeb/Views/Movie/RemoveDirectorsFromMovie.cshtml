@@ -1,0 +1,32 @@
+﻿@model ICollection<Website.Models.Director>
+<link href="~/Content/styling.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Remove director from movie";
+}
+
+<h2>Choose which director to remove from - @ViewBag.movieName</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            Director Name
+        </th>
+        <th>
+            Place Of Birth
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.DirectorName, "RemoveDirectorFromMovie", new { DirectorId = item.DirectorId, MovieId = ViewBag.movieId })
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlaceOfBirth)
+            </td>
+        </tr>
+    }
+
+</table>

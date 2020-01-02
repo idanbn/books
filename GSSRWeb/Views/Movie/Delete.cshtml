@@ -1,0 +1,71 @@
+﻿@model Website.Models.Movie
+
+@{
+    ViewBag.Title = "Delete";
+}
+<link href="~/Content/readmore.css" rel="stylesheet" type="text/css" />
+<link href="~/Content/styling.css" rel="stylesheet" type="text/css" />
+
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/readmore.js"></script>
+
+<h2>Are you sure you want to delete @Html.DisplayFor(model => model.MovieName) ?</h2>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Genre.GenreName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Genre.GenreName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MovieName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MovieName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.YearOfPublish)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.YearOfPublish)
+        </dd>
+
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MovieDuration)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MovieDuration)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Summary)
+        </dt>
+
+        <dd>
+            <span class="more">
+                @Html.DisplayFor(model => model.Summary)
+            </span>
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to previous page", null, null, null, new { href = Request.UrlReferrer })
+        </div>
+    }
+</div>

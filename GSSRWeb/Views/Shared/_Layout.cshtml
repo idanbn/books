@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Welcome to GSSR, the best Movie reviews site!</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <nav class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @Html.ActionLink("GSSR", "Index", "Main", null, new { @class = "navbar-brand" })
+                </nav>
+                <nav class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Movies", "GetAllMovies", "Movie")</li>
+                        <li>@Html.ActionLink("Actors", "GetAllActors", "Actor")</li>
+                        <li>@Html.ActionLink("Directors", "GetAllDirectors", "Director")</li>
+                        <li>@Html.ActionLink("Writers", "GetAllWriters", "Writer")</li>
+                        <li>@Html.ActionLink("Genres", "GetCountOfMoviesByGenre", "Genre")</li>
+                    </ul>
+                    @Html.Partial("_LoginPartial")
+                </nav>
+            </div>
+        </nav>
+    <div class="container body-content">
+        <div class="testAjax">
+            @RenderBody()
+        </div>
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - GSSR</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

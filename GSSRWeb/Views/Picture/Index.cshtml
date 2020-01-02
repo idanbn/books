@@ -1,0 +1,35 @@
+﻿@model IEnumerable<Website.Models.Picture>
+<link href="~/Content/styling.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.PictureName)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PictureName)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.PictureId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.PictureId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.PictureId })
+            </td>
+        </tr>
+    }
+
+</table>

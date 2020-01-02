@@ -1,0 +1,20 @@
+﻿<link href="~/Content/styling.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Confirm adding actor";
+}
+
+<h2>Are you sure you want to add @ViewBag.writerName to @ViewBag.movieName ?</h2>
+<div>
+    <hr />
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Add" class="btn btn-default" /> |
+            @Html.ActionLink("Cancel", "GetAllMovies")
+        </div>
+    }
+</div>

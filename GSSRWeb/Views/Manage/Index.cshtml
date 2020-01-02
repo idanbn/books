@@ -1,0 +1,41 @@
+﻿@model GSSRWebMovies.Models.IndexViewModel
+<link href="~/Content/styling.css" rel="stylesheet" type="text/css" />
+
+@{
+    /**/
+
+    ViewBag.Title = "Manage";
+}
+<link href="@Url.Content("~/Content/styling.css")" rel="stylesheet" type="text/css" />
+<h2>@ViewBag.Title.</h2>
+
+<p class="text-success">@ViewBag.StatusMessage</p>
+<div>
+    <h4>Change your account settings</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Username:</dt>
+        <dd>
+            @Model.UserName
+        </dd>
+        <dt>Password:</dt>
+        <dd>
+            [
+            @if (Model.HasPassword)
+            {
+                @Html.ActionLink("Change your password", "ChangePassword")
+            }
+            else
+            {
+                @Html.ActionLink("Create", "SetPassword")
+            }
+            ]
+        </dd>
+        @if (ViewBag.isAdmin == "Yes")
+        {
+            <h4>Welcome Admin. You can manage the site from here:</h4>
+            <button onclick="location.href='@Url.Action("ManageSite", "Site")';return false;">Manage Site</button>
+        }
+
+    </dl>
+</div>

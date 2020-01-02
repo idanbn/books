@@ -1,0 +1,54 @@
+﻿@model PagedList.IPagedList<Website.Models.Genre>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<link href="~/Content/styling.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>All Genres:</h2>
+@if (ViewBag.isAdmin == "true")
+{
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.ActionLink("Genre Id", "GetAllGenres", new { sortOrder = ViewBag.IdSortParam })
+        </th>
+        <th>
+            @Html.ActionLink("Genre Name", "GetAllGenres", new { sortOrder = ViewBag.NameSortParam })
+        </th>
+        @if (ViewBag.isAdmin == "true")
+        {
+            <th></th>
+        }
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.GenreId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GenreName)
+            </td>
+            @if (ViewBag.isAdmin == "true")
+            {
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.GenreId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.GenreId })
+                </td>
+            }
+        </tr>
+    }
+
+</table>
+<br />
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("GetAllGenres", new { page, sortOrder = ViewBag.CurrentSort }))

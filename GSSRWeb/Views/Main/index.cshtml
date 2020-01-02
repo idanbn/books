@@ -1,0 +1,367 @@
+﻿@{
+    Layout = null;
+}
+@model System.Collections.Generic.List<Website.Models.Movie>
+<!DOCTYPE html>
+
+<html>
+<head>
+    @*Bootstrap*@
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width" />
+    <title>GSSR Reviews</title>
+    <!-- Load d3.js -->
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="~/Scripts/PieChart.js"></script>
+    <!-- Color scale -->
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script><!-- Load jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Button Script-->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".card").mouseover(function () {
+                $("#" + this.id + " .btn").css("backgroundColor", "Green");
+            })
+
+            $(".card").mouseout(function () {
+                $("#" + this.id + " .btn").css("backgroundColor", "Blue");
+            })
+        })
+    </script>
+
+    <!-- Video player script-->
+    <script id="vid" data-myvar="@Model[0].YoutubeId">
+        // 2. This code loads the IFrame Player API code asynchronously.
+        var tag = document.createElement('script');
+
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // 3. This function creates an <iframe> (and YouTube player)
+        //    after the API code downloads.
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '350px',
+                width: '100%',
+                videoId: $('#vid').data('myvar'),
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        // 4. The API will call this function when the video player is ready.
+        function onPlayerReady(event) {
+            event.target.playVideo();
+        }
+
+        // 5. The API calls this function when the player's state changes.
+        //    The function indicates that when playing a video (state=1),
+        //    the player should play for six seconds and then stop.
+        // var done = false;
+        function onPlayerStateChange(event) {
+            //if (event.data == YT.PlayerState.PLAYING && !done) {
+            //    setTimeout(stopVideo, 3000);
+            //    done = true;
+            //}
+        }
+        function stopVideo() {
+            player.stopVideo();
+        }
+    </script>
+
+
+    <style>
+        .chart {
+            margin-top: 20%;
+        }
+
+            .chart div {
+                font: 15px sans-serif;
+                background-color: steelblue;
+                text-align: right;
+                padding: 3px;
+                margin: 1px;
+                color: white;
+            }
+
+        .newspaper {
+            /* Old Chrome, Safari, Opera */
+            -webkit-column-count: 3;
+            -webkit-column-width: 100px;
+            /* Old Firefox */
+            -moz-column-count: 3;
+            -moz-column-width: 100px;
+            /* Standard syntax */
+            column-count: 3;
+            column-width: 100px;
+        }
+
+        .btn:hover
+{
+        -webkit-transform: scale(1.1);
+        -ms-transform: scale(1.1);
+        transform: scale(1.1);
+}
+    </style>
+</head>
+<body>
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v4.0&appId=2393396124238419&autoLogAppEvents=1"></script>
+
+    <header>
+        @*Navigation*@
+        <ul class="nav justify-content-center">
+            <li class="nav-item">
+                @Html.ActionLink("Browse", "GetAllMovies", "Movie", null, new { @class = "nav-link active" })
+            </li>
+            <li class="nav-item">
+                @Html.ActionLink("Actors", "GetAllActors", "Actor", null, new { @class = "nav-link active" })
+            </li>
+            <li class="nav-item">
+                @Html.ActionLink("Writers", "GetAllWriters", "Writer", null, new { @class = "nav-link active" })
+            </li>
+            <li class="nav-item">
+                @Html.ActionLink("Directors", "GetAllDirectors", "Director", null, new { @class = "nav-link active" })
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#AboutUs">About</a>
+            </li>
+            <li class="nav-item">
+
+                @if (User.Identity.IsAuthenticated)
+                {
+
+                <li class="nav-item Go">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user"></i> @User.Identity.Name</a>
+                    <div class="dropdown-menu">
+                        @Html.ActionLink("Manage Account", "Index", "Manage", null, new { @class = "dropdown-item" })
+                        <div class="dropdown-divider"></div>
+                        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()">Log Out</a>
+                        }
+                    </div>
+                </li>
+            }
+            else
+            {
+                @Html.ActionLink("LOG IN", "Login", "Account", null, new { @class = "nav-link active" })
+            }
+                </li>
+            </ul>
+        </header>
+
+        @*Jumbotron*@
+        <div class="jumbotron jumbotron-fluid" style="min-height:500px">
+            <div class="container">
+                <canvas id="myCanvas" width="180" height="70" style="solid #d3d3d3;">
+                    Your browser does not support the HTML5 canvas tag.
+                </canvas>
+                <script>
+                    var c = document.getElementById("myCanvas");
+                    var ctx = c.getContext("2d");
+                    ctx.font = "50px Arial";
+                    ctx.strokeText("GSSR", 10, 50);
+                </script>
+                <div class="row">
+                    <div class="col-6">
+                        <h1 class="display-4">Featured Movie</h1>
+                        <h2>@Html.DisplayFor(modelItem => Model[0].MovieName)</h2>
+                        <aside>
+                            <p class="lead">
+                                @Html.DisplayFor(modelItem => Model[0].Summary)
+                            </p>
+                        </aside>
+                        @Html.ActionLink("Visit Movie Page", "GetMovieById", "Movie", new { id = Model[0].MovieId }, new { @class = "btn btn-primary btn-lg" })
+                    </div>
+                    <div class="col-6">
+                        @if (Model[0].YoutubeId != null)
+                        {
+                            <div id="player"></div>
+                        }
+                        else
+                        {
+                            <img src=@Model[0].Picture.PictureName alt="Card image cap">
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @*Recommendation*@
+        @if (User.Identity.IsAuthenticated)
+        {
+            if (this.ViewBag.RecommendedMovie != null)
+            {
+                <section id="recommendations">
+                    <div class="container">
+                        <h1>Recommended for you</h1>
+                        <hr />
+                        <div class="card mb-3" style="max-width: 100%;">
+                            <div class="row no-gutters">
+                                <div class="col-md-4">
+                                    <img src=@this.ViewBag.RecommendedMovie.Picture.PictureName class="card-img" alt="...">
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h2 class="card-title">@this.ViewBag.RecommendedMovie.MovieName (@this.ViewBag.RecommendedMovie.Genre.GenreName)</h2>
+                                        <hr />
+                                        <h5 class="card-text">@this.ViewBag.RecommendedMovie.Summary</h5>
+                                        <br />
+                                        @Html.ActionLink("Visit Movie Page", "GetMovieById", "Movie", new { id = this.ViewBag.RecommendedMovie.MovieId }, new { @class = "btn btn-primary" })
+                                        <aside>
+                                        <p class="card-text"><small class="text-muted">Because you visited: @this.ViewBag.RecommendedBecause.MovieName</small></p>
+                                        </aside>
+                                            <hr />
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h5 class="card-text">Rating Distribution</h5>
+                                                    <div id="my_dataviz"></div>
+                                                    <script>
+                                                         PieChart([@this.ViewBag.ratings[0],@this.ViewBag.ratings[1],@this.ViewBag.ratings[2],@this.ViewBag.ratings[3],@this.ViewBag.ratings[4]]);
+                                                    </script>
+                                                </div>
+                                                <div class="col">
+                                                    <h5 class="card-text">Average Rating</h5>
+                                                    <div class="chart"></div>
+                                                    <script>
+                                                        var data = [@this.ViewBag.avgGenreRating,@this.ViewBag.movieAvgRating];
+                                                        d3.select(".chart")
+                                                            .selectAll("div")
+                                                            .data(data)
+                                                            .enter()
+                                                            .append("div")
+                                                            .style("width", function (d) { return d*50 + "px"; })
+                                                            .text(function (d, i) { if (i == 0) { return "Genre AVG: " + d.toFixed(2) } else {return "Movie Rating: "+ d.toFixed(2) }});
+                                                    </script>
+                                                </div>
+                                            </div>
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                </section>
+                <br />
+            }
+        }
+
+        @*Movie Cards*@
+        <section>
+            <div class="container">
+                <aside>
+                    <h1>Recently Added</h1>
+                </aside>
+                <hr />
+                <br />
+                <div class="card-deck">
+                    @*@foreach (var m in Model)*@
+                    @for (int i = 1; i < 4; i++)
+                    {
+
+                        <div class="card" id=@Model[i].MovieId>
+                            <a href="@Url.Action("GetMovieById/" + @Model[i].MovieId, "Movie")">
+                                <img class="card-img-top" src=@Model[i].Picture.PictureName alt="Card image cap">
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title">@Html.DisplayFor(modelItem => Model[i].MovieName) (@Html.DisplayFor(modelItem => Model[i].MovieDuration) Minutes)</h5>
+                                <p class="card-text">@Html.DisplayFor(modelItem => Model[i].Summary)</p>
+                                @Html.ActionLink("Visit Movie Page", "GetMovieById", "Movie", new { id = Model[i].MovieId }, new { @class = "btn btn-primary" })
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+
+        <br />
+        @*Highest Rated*@
+        <div class="jumbotron jumbotron-fluid" style="min-height:700px">
+            <div class="container">
+                <h1>Highest Rated</h1>
+                <hr />
+                @for (int i = 4; i < Model.Count(); i++)
+                {
+                    <div class="row">
+                        <div class="card mb-3" style="min-width:100%">
+                            <div class="row no-gutters">
+                                <div class="col-md-4">
+                                    <a href="@Url.Action("GetMovieById/" + @Model[i].MovieId, "Movie")">
+                                        <img src=@Model[i].Picture.PictureName class="card-img" alt="...">
+                                    </a>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h1 class="card-title">@Html.DisplayFor(modelItem => Model[i].MovieName)</h1>
+                                        <h4 class="card-text">@Html.DisplayFor(modelItem => Model[i].Summary)</h4>
+                                        <hr />
+                                        <h2 class="card-title">LATEST REVIEW</h2>
+                                        <hr />
+                                        <h5>By: @Html.DisplayFor(modelItem => Model[i].Review.First().UserName)</h5>
+                                        <h5>Date: @Html.DisplayFor(modelItem => Model[i].Review.First().ReviewDate)</h5>
+                                        <h5>Rating: @Html.DisplayFor(modelItem => Model[i].Review.First().ReviewRating)</h5>
+                                        <h5>Content: @Html.DisplayFor(modelItem => Model[i].Review.First().ReviewText)</h5>
+                                        @Html.ActionLink("Add your own review", "Create", "Review", new { id = Model[i].MovieId }, new { @class = "btn btn-primary" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        @*About Us*@
+        <section id="AboutUs">
+            <div class="container">
+                <h1>About Us</h1>
+                <hr />
+                <div class="row">
+                    <div class="col">
+                        <div class="newspaper">
+                            GSSR is a community for unbiased reviewers to tell their true opinions of movies and share their likes and dislikes to others like them.
+                            we encourage our users to share their opinions with others since it helps viewers decide on what to watch
+                            GSSR is a student's is a collaborate effort that includes four students from COLMAN taking the Web Applications course in 2019.
+
+                            This web application is built with Microsoft's ASP.NET, Javascript and its famous libraries (jQuery, d3js), html and css3.
+                            We use bootstrap for the layout and common components, SQL with the use of Entity Framework and we hope that you will enjoy our site.
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="fb-page" data-href="https://www.facebook.com/GSSR-101473701245811/" data-tabs="timeline" data-width="600px" data-height="" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/GSSR-101473701245811/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/GSSR-101473701245811/">‏‎GSSR‎‏</a></blockquote></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <footer>
+            <br />
+            <ul class="nav justify-content-center">
+                <li class="nav-item">
+                    GSSR 2019
+                </li>
+            </ul>
+            <div class="container">
+                <div class="fb-like" data-href="https://www.facebook.com/GSSR-101473701245811/" data-width="" data-layout="standard" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
+            </div>
+
+
+        </footer>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    </body>
+</html>

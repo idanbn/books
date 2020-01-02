@@ -1,0 +1,23 @@
+﻿<link href="~/Content/styling.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "ManageSite";
+}
+
+<h2>Site Managment</h2>
+<div>
+    <h4>Hello Admin, you can manage every entity from here.</h4>
+    <hr />
+    <h7>
+        <li>@Html.ActionLink("Manage Role", "GetAllRoles", "Role")</li>
+        <li>@Html.ActionLink("Manage Users", "GetAllUsers", "User")</li>
+        <li>@Html.ActionLink("Manage Movies", "GetAllMovies", "Movie")</li>
+        <li>@Html.ActionLink("Manage Actors", "GetAllActors", "Actor")</li>
+        <li>@Html.ActionLink("Manage Directors", "GetAllDirectors", "Director")</li>
+        <li>@Html.ActionLink("Manage Writers", "GetAllWriters", "Writer")</li>
+        <li>@Html.ActionLink("Manage Pictures", "GetAllPictures", "Picture")</li>
+        <li>@Html.ActionLink("Manage Genres", "GetAllGenres", "Genre")</li>
+    </h7>
+
+</div>
+

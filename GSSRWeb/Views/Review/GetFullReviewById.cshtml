@@ -1,0 +1,40 @@
+﻿@model Website.Models.Review
+<link href="@Url.Content("~/Content/styling.css")" rel="stylesheet" type="text/css" />
+
+
+
+<h2>@Html.DisplayFor(model => model.UserName)'s review of @Html.DisplayFor(model => model.Movie.MovieName)</h2>
+<hr />
+<dl class="dl-horizontal">
+    <dt>
+        @Html.DisplayNameFor(model => model.UserName)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.UserName)
+    </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.ReviewDate)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.ReviewDate)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.ReviewRating)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.ReviewRating)
+    </dd>
+    <dt>
+        @Html.DisplayNameFor(model => model.ReviewText)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.ReviewText)
+    </dd>
+    @Html.ActionLink("Back", "GetReviewsByMovieId", new { Id = Model.MovieId })
+ 
+</dl>

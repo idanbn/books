@@ -1,0 +1,67 @@
+﻿<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@model System.Collections.Generic.List<Website.Models.Review>
+<link href="@Url.Content("~/Content/styling.css")" rel="stylesheet" type="text/css" />
+<h2>@this.ViewBag.movie.MovieName Reviews</h2>
+
+<table class="table">
+
+    <tr>
+        <th>
+            @Html.DisplayNameFor(modelItem => Model[0].UserName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(modelItem => Model[0].ReviewDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(modelItem => Model[0].ReviewRating)
+        </th>
+        <th>
+           @Html.DisplayNameFor(modelItem => Model[0].ReviewText)
+        </th>
+        @if (ViewBag.isAdmin == "true")
+        {
+            <th>Actions</th>
+        }
+    </tr>
+@foreach (var item in Model)
+{
+
+        <tr>
+            <td>
+               @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReviewDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReviewRating)
+            </td>
+            <td>
+               @if (item.ReviewText.Length <= 8) {
+                         @Html.DisplayFor(modelItem => item.ReviewText)
+                   }
+               
+                else
+                {
+                    @item.ReviewText.Substring(0, item.ReviewText.Length / 4)               
+               }
+                ...
+                @Html.ActionLink("Show more", "GetFullReviewById", item)
+            </td>
+            @if (ViewBag.isAdmin == "true")
+            {
+                <td>
+                  @*  @Html.ActionLink("Edit", "Edit", new { id = item.ReviewId }) |*@
+                    @*The edit functionality seems unnecessary in reviews, since its unethical and defeats the purpose of reviews,
+                    if a review does not follow the rules of the sites you simply delete it.*@
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ReviewId })
+                </td>
+            }
+        </tr>
+    }
+
+</table>
+
+    @*Add design later*@
+
+

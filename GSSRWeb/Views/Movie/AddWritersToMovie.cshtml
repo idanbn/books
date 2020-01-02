@@ -1,0 +1,47 @@
+﻿@model PagedList.IPagedList<Website.Models.Writer>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<link href="~/Content/styling.css" rel="stylesheet" type="text/css" />
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
+@{
+    ViewBag.Title = "Add writer to movie";
+}
+
+<h2>Choose which writer to add to - @ViewBag.movieName</h2>
+@using (Ajax.BeginForm("AddWritersToMovie", "Movie", new AjaxOptions() { HttpMethod = "GET" }, new { id = ViewBag.movieId }))
+{
+    <p>
+        <input type="hidden" name="sortOrder" value=@ViewBag.CurrentSort />
+        Find by name:@Html.TextBox("queryString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search" />
+    </p>
+}
+<table class="table">
+    <tr>
+        <th>
+            @Html.ActionLink("Writer Name", "AddWritersToMovie", new { id = ViewBag.movieId, sortOrder = ViewBag.NameSortParam, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("Place Of Birth", "AddWritersToMovie", new { id = ViewBag.movieId, sortOrder = ViewBag.BirthPlaceSortParam, currentFilter = ViewBag.CurrentFilter })
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.WriterName, "AddWriterToMovie", new { WriterId = item.WriterId, MovieId = ViewBag.movieId })
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlaceOfBirth)
+            </td>
+        </tr>
+    }
+
+</table>
+<br />
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("AddWritersToMovie", new { id = ViewBag.movieId, page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))

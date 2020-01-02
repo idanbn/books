@@ -1,0 +1,70 @@
+﻿@model PagedList.IPagedList<Website.Models.Director>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/styling.css")" rel="stylesheet" type="text/css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<h2>Directors</h2>
+@if (ViewBag.isAdmin == "true")
+{
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}
+@using (Ajax.BeginForm("GetAllDirectors", "Director", new AjaxOptions() { HttpMethod = "GET" }))
+{
+    <p>
+        <input type="hidden" name="sortOrder" value=@ViewBag.CurrentSort />
+        Find by name:@Html.TextBox("queryString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search" />
+    </p>
+}
+<table class="table">
+    <tr>
+        <th>
+            @Html.ActionLink("Director Name", "GetAllDirectors", new { sortOrder = ViewBag.NameSortParam, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("Place Of Birth", "GetAllDirectors", new { sortOrder = ViewBag.BirthPlaceSortParam, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("Date Of Birth", "GetAllDirectors", new { sortOrder = ViewBag.AgeSortParam, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        @if (ViewBag.isAdmin == "true")
+        {
+            <th></th>
+        }
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.DirectorName, "GetDirectorById", new { id = item.DirectorId })
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlaceOfBirth)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateOfBirth)
+            </td>
+            @if (ViewBag.isAdmin == "true")
+            {
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.DirectorId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.DirectorId })
+                </td>
+            }
+        </tr>
+    }
+
+</table>
+<br />
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("GetAllDirectors", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))

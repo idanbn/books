@@ -1,0 +1,27 @@
+﻿@model  Website.Models.Movie
+<link href="~/Content/styling.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Change Movie Cast";
+}
+
+<h2>Change @Model.MovieName cast</h2>
+<div>
+    <h3>ADD:</h3>
+    <h4>Choose which cast member you would like to add</h4>
+    <hr />
+    <h7>
+        <li>@Html.ActionLink("Add actor", "AddActorsToMovie", new { id = Model.MovieId })</li>
+        <li>@Html.ActionLink("Add director", "AddDirectorsToMovie", new { id = Model.MovieId })</li>
+        <li>@Html.ActionLink("Add writer", "AddWritersToMovie", new { id = Model.MovieId })</li>
+    </h7>
+    <br />
+    <h3>Remove:</h3>
+    <h4>Choose which cast member you would like to remove</h4>
+    <hr />
+    <h7>
+        <li>@Html.ActionLink("Remove actor", "RemoveActorsFromMovie", new { id = Model.MovieId })</li>
+        <li>@Html.ActionLink("Remove director", "RemoveDirectorsFromMovie", new { id = Model.MovieId })</li>
+        <li>@Html.ActionLink("Remove writer", "RemoveWritersFromMovie", new { id = Model.MovieId })</li>
+</div>
+

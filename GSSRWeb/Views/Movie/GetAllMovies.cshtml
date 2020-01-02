@@ -1,0 +1,207 @@
+﻿@model PagedList.IPagedList<Website.Models.Movie>
+@using PagedList.Mvc
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<link href="~/Content/styling.css" rel="stylesheet" type="text/css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+<script>
+    $(document).ready(function () {
+        if('@ViewBag.Descending' == true)
+        $('#descending').prop('checked', true);
+    });
+
+    function checkBoxChangeHandler() {
+        var checkBox = $('#descending').is(":checked");
+        var tmp = "descending=" + checkBox;
+        if ('@ViewBag.CurrentFilter' != "")
+            tmp = tmp + "&currentFilter=" + '@ViewBag.CurrentFilter';
+        var currentSort = $('#sortBy').val();
+        if (currentSort != "")
+            tmp = tmp + "&sortOrder=" + currentSort;
+        $.ajax({
+            url: '/Movie/GetAllMovies/',
+            type: 'GET',
+            data: tmp,
+            success: function (data,
+                textStatus, XMLHttpRequest) {
+                $(".testAjax").html(data);
+            }
+        });
+    }
+
+    function DropdownChangeHandler(sortOrder) {
+        var dropdown = $('#sortBy');
+        dropdown.value = sortOrder;
+        var checkBox = $('#descending').is(":checked");//get Descending checkbox value with jQuery
+        var tmp = "sortOrder=" + sortOrder;
+        if ('@ViewBag.CurrentFilter' != "")
+            tmp = tmp + "&currentFilter=" + '@ViewBag.CurrentFilter';
+        if (checkBox == true)
+            tmp = tmp + "&descending=" + checkBox;
+        //window.location.href = '@Url.Action("GetAllMovies", "Movie")' + tmp;
+        $.ajax({
+            url: '/Movie/GetAllMovies/',
+            type:'GET',
+            data: tmp,
+            success: function (data,
+                textStatus, XMLHttpRequest) {
+                $(".testAjax").html(data);
+            }
+        });
+    }
+</script>
+
+@{
+    ViewBag.Title = "GetAllMovies";
+}
+
+<h2>Welcome to GSSR Review site! Our movies:</h2>
+
+@if (ViewBag.isAdmin == "true")
+{
+    <p>
+        @Html.ActionLink("Create New Movie", "Create")
+    </p>
+}
+<div class="col-xs-4">
+    @using (Ajax.BeginForm("GetAllMovies", "Movie", new AjaxOptions() { HttpMethod = "GET" }))
+    {
+        <input type="hidden" name="sortOrder" value=@ViewBag.CurrentSort />
+        <input type="hidden" name="descending" value=@ViewBag.Descending.ToString() />
+        <p>
+            Find by name:@Html.TextBox("queryString", ViewBag.CurrentFilter as string)
+            <input type="submit" value="Search" />
+        </p>
+    }
+</div>
+<div class="col-xs-3">
+</div>
+<div class="col-xs-3">
+    Sort movies by: @Html.DropDownList("sortBy",new SelectListItem[]
+{
+new SelectListItem() { Text = "Name", Value = "name" ,Selected=ViewBag.CurrentSort=="name"?true:false},
+new SelectListItem() { Text = "Genre", Value = "genre",Selected=ViewBag.CurrentSort=="genre"?true:false },
+new SelectListItem() { Text = "Year", Value = "year" ,Selected=ViewBag.CurrentSort=="year"?true:false},
+new SelectListItem() { Text = "Duration", Value = "duration",Selected=ViewBag.CurrentSort=="duration"?true:false }
+},
+new { @onchange = "DropdownChangeHandler(this.value)" })
+</div>
+
+
+
+<div class="col-xs-2">
+    <input type="checkbox" id="descending" onchange="checkBoxChangeHandler()" name="descending" value="_desc" checked="@ViewBag.Descending">Descending<br>
+</div>
+
+<br />
+
+
+@foreach (var item in Model)
+{
+    <div class="col-xs-12">
+        <hr style="width:100%">
+        <br />
+        <h3>@Html.ActionLink(item.MovieName, "GetMovieById", new { Id = item.MovieId }):</h3>
+        <br />
+        <div class="col-xs-3">
+            <a href="@Url.Action("GetMovieById/" + item.MovieId, "Movie")">
+                <img src="@item.Picture.PictureName" style="width:100%;height:30%;transition: width 2s; " />
+            </a>
+        </div>
+
+        <div class="col-xs-5">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(modelItem => item.Genre.GenreName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(modelItem => item.Genre.GenreName)
+                </dd>
+                <dt>
+                    Movie Rating
+                </dt>
+                <dd>
+                    @(item.Review.Count() == 0 ? "No reviews yet" : ((double)item.Review.Sum(m => m.ReviewRating) / item.Review.Count()).ToString())
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(modelItem => item.MovieDuration) (Min)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(modelItem => item.MovieDuration)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(modelItem => item.YearOfPublish)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(modelItem => item.YearOfPublish)
+                </dd>
+                <dt>
+                    Writers
+                </dt>
+                <dd>
+                    @foreach (var writer in item.Writer)
+                    {
+                        @Html.ActionLink(writer.WriterName, "GetWriterById", "Writer", new { Id = writer.WriterId }, null)
+                        if (writer != item.Writer.Last())
+                        {
+                            <tab>,</tab>
+                        }
+                    }
+                </dd>
+
+                <dt>
+                    Directors
+                </dt>
+                <dd>
+                    @foreach (var director in item.Director)
+                    {
+                        @Html.ActionLink(director.DirectorName, "GetDirectorById", "Director", new { Id = director.DirectorId }, null)
+                        if (director != item.Director.Last())
+                        {
+                            <tab>,</tab>
+                        }
+                    }
+                </dd>
+                <dt>
+                    Actors
+                </dt>
+                <dd>
+                    @foreach (var actor in item.Actor)
+                    {
+                        @Html.ActionLink(actor.ActorName, "GetActorById", "Actor", new { Id = actor.ActorId }, null)
+                        if (actor != item.Actor.Last())
+                        {
+                            <tab>,</tab>
+                        }
+                    }
+                </dd>
+            </dl>
+        </div>
+        <div class="col-xs-4">
+
+            @if (ViewBag.isAdmin == "true")
+            {
+                <p>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.MovieId }) |
+                    @Html.ActionLink("Change crew", "ChangeMovieCast", new { id = item.MovieId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.MovieId })
+                </p>
+            }
+        </div>
+
+
+    </div>
+
+}
+
+
+<div class="col-xs-12">
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("GetAllMovies",
+        new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+</div>

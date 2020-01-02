@@ -1,0 +1,90 @@
+﻿@model PagedList.IPagedList<Website.Models.Actor>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<link href="~/Content/styling.css" rel="stylesheet" type="text/css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<h2>All Actors</h2>
+@if (ViewBag.isAdmin == "true")
+{
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}
+<div class="col-xs-6">
+        @using (Ajax.BeginForm("GetAllActors", "Actor", new AjaxOptions() { HttpMethod = "GET" }))
+        {
+    <p>
+        <input type="hidden" name="sortOrder" value=@ViewBag.CurrentSort />
+        <input type="hidden" name="stateFilter" value=@ViewBag.CurrentStateFilter />
+        Find by name:@Html.TextBox("queryString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search" />
+    </p>
+        }
+</div>
+<div class="col-xs-6">
+    @using (Ajax.BeginForm("GetAllActors", "Actor", new AjaxOptions() { HttpMethod = "GET" }))
+    {
+    <p>
+        <input type="hidden" name="sortOrder" value=@ViewBag.CurrentSort />
+        <input type="hidden" name="queryString" value=@ViewBag.CurrentFilter />
+        Find by country:@Html.TextBox("stateFilter", ViewBag.CurrentStateFilter as string)
+        <input type="submit" value="Search" />
+    </p>
+    }
+</div>
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.ActionLink("Actor Name", "GetAllActors", new { sortOrder = ViewBag.NameSortParam, currentFilter = ViewBag.CurrentFilter, currentStateFilter = ViewBag.CurrentStateFilter })
+                </th>
+                <th>
+                    @Html.ActionLink("Place Of Birth", "GetAllActors", new { sortOrder = ViewBag.BirthPlaceSortParam, currentFilter = ViewBag.CurrentFilter, currentStateFilter = ViewBag.CurrentStateFilter })
+                </th>
+                <th>
+                    @Html.ActionLink("Date Of Birth", "GetAllActors", new { sortOrder = ViewBag.AgeSortParam, currentFilter = ViewBag.CurrentFilter, currentStateFilter = ViewBag.CurrentStateFilter })
+                </th>
+                <th>
+                    @Html.ActionLink("Actor's IMDB page", "GetAllActors", new { currentFilter = ViewBag.CurrentFilter, currentStateFilter = ViewBag.CurrentStateFilter })
+                </th>
+                @if (ViewBag.isAdmin == "true")
+                {
+                    <th></th>
+                }
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.ActionLink(item.ActorName, "GetActorById", new { id = item.ActorId })
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PlaceOfBirth)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateOfBirth)
+                    </td>
+                    <td>
+                        <a href="@item.ActorIMDBPage">@item.ActorName's page</a>
+                    </td>
+                    @if (ViewBag.isAdmin == "true")
+                    {
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.ActorId }) |
+                            @Html.ActionLink("Delete", "Delete", new { id = item.ActorId })
+                        </td>
+                    }
+                </tr>
+            }
+
+        </table>
+        <br />
+        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        @Html.PagedListPager(Model, page => Url.Action("GetAllActors", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, currentStateFilter = ViewBag.CurrentStateFilter }))
